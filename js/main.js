@@ -153,6 +153,7 @@ function playAlbum(event){
 
       var icon=$('<i>',{
        class:"fa fa-pencil",
+       // click:editSong,
        css:{"font-size":"22px"}
       }).appendTo(button);
 
@@ -172,10 +173,24 @@ function playAlbum(event){
   function buildList(index, val){
     var ul = $('<ul>',{
     }).appendTo($('#containerAlbum'));
-     var li = $('<li>',{
-      text: val.name
-    }).appendTo(ul);
-     // return li;
+
+    var button = $('<button>',{
+      class:'buttonSong'
+    }).appendTo(ul)
+
+    var i=$('<i>',{
+        class:'fa fa-play',
+        css:{"font-size":'16px'}
+    });
+
+      $('<li>',{
+      text: val.name,
+      tabindex:index,
+     click:function (e) {
+            replaceSong(e,val); 
+        },
+    }).appendTo(button);
+
 
 
     // // var songlist = $('<div>',{
@@ -191,7 +206,14 @@ function playAlbum(event){
     //     tabindex:index,
     //   }).appendTo(songlist);
   }
-
+function replaceSong(index,val){
+   console.log(val);
+     var audio=$('#audioPlay'); 
+     $('#song_source').attr("src",val.url);
+     audio[0].pause();
+     audio[0].load();
+     audio[0].oncanplaythrough = audio[0].play();
+}
 
 
   function playMusic(values){
