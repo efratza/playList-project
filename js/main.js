@@ -2,6 +2,9 @@
 //    ajax(null,"header.html",'GET');
 // });
 
+
+var sourcePlayList;
+
 $(document).ready(function() {
  ajax(null,"api/playlist",'GET')
  .then(function(data) {
@@ -10,6 +13,9 @@ $(document).ready(function() {
                $.each(data.data, function(index, val) {
                 buildPlaylist(index, val);
               }); 
+
+
+               sourcePlayList = data.data;
          });
   });
 
@@ -44,7 +50,7 @@ function buildPlaylist(index, val){
 
  var playIcon=$('<button>',{
    class:"buttonIcon",
-           // click:playSong,
+           click:playSong,
          }).appendTo(playItemSmall);
 
 
@@ -85,7 +91,7 @@ function buildPlaylist(index, val){
 $('.addsong').click (function(){
   // var newPlaylistObject= {};
   var popup = new FormPopup();
-  popup.build();
+  popup.build(sourcePlayList);
   // console.log(index)
 });
 
@@ -127,35 +133,35 @@ function playAlbum(event){
       var text = $('<p>',{
         text:"NOW PLAYING :"+values[1].data.songs[0].name
       }).appendTo($('#play'));
-      // var buttons=$('<div>',{
-      //  class:"buttons"
-      // }).appendTo($('#play'));
+      var buttons=$('<div>',{
+       class:"buttons"
+      }).appendTo($('#play'));
 
-      // var button=$('<button>',{
-      //  class:"buttonIcon",
-      // }).appendTo(buttons);
+      var button=$('<button>',{
+       class:"buttonIcon",
+      }).appendTo(buttons);
 
-      // var icon=$('<i>',{
-      //  class:"fa fa-close",
-      //  id: "remove_btn", 
-      //  css:{"font-size":"22px"}
-      // }).appendTo(button);
+      var icon=$('<i>',{
+       class:"fa fa-close",
+       id: "remove_btn", 
+       css:{"font-size":"22px"}
+      }).appendTo(button);
 
-      // var button=$('<button>',{
-      //  class:"buttonIcon"
-      // }).appendTo(buttons);
+      var button=$('<button>',{
+       class:"buttonIcon"
+      }).appendTo(buttons);
 
-      // var icon=$('<i>',{
-      //  class:"fa fa-pencil",
-      //  css:{"font-size":"22px"}
-      // }).appendTo(button);
+      var icon=$('<i>',{
+       class:"fa fa-pencil",
+       css:{"font-size":"22px"}
+      }).appendTo(button);
 
-      // $('.playItem').click(playMusic);
+      $('.playItem').click(playMusic);
       var obj=values[1].data.songs;
-        console.log(obj)
-       $.each(obj, function(index,val){
+        console.log(obj);
+             $.each(obj, function(index,val){
         console.log(777)
-         // $('#playList').append(buildList(index, val));
+         $('#playList').append(buildList(index, val));
        
 
 
@@ -164,17 +170,26 @@ function playAlbum(event){
   }
 
   function buildList(index, val){
-    // var songlist = $('<div>',{
-    //   class:songList
-    // }).appendTo($('#playList'));
+    var ul = $('<ul>',{
+    }).appendTo($('#containerAlbum'));
      var li = $('<li>',{
-        html: $('<button>', {
-        text: val.name,
-        click: playSong,
-        class: "player-song-button",
-          }).attr('data-src', val.url), 
-        tabindex:index,
-      }).appendTo(songlist);
+      text: val.name
+    }).appendTo(ul);
+     // return li;
+
+
+    // // var songlist = $('<div>',{
+    // //   class:songList
+    // // }).appendTo($('#playList'));
+    
+    //  var li = $('<p>',{
+    //     // html: $('<button>', {
+    //     text: val.name,
+    //     // click: playSong,
+    //     class: "player-song-button",
+    //       // }).attr('data-src', val.url), 
+    //     tabindex:index,
+    //   }).appendTo(songlist);
   }
 
 
@@ -184,6 +199,12 @@ function playAlbum(event){
     console.log(song);
 
   }
+
+  function playSong(){
+    
+  }
+
+
 
 
 
@@ -197,16 +218,26 @@ function ajax(data,url,method) {
    console.log(data);
    console.log(url);
    console.log(method);
+
    return new Promise(function (resolve) {
+
+    // debugger;
     $.ajax({
       type: method,
       url: url, 
       data: data,
       success: function (response) {
+
+        // debugger;
         //console.log("response from success    "+response);
         // console.log(response);  
         resolve(response);
+      },
+      error: function(a, b, c){
+
+        // debugger;
       }
+
     });
   });
 }

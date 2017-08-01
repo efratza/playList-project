@@ -1,4 +1,4 @@
-var newPlaylistObject = {};
+
 
 class Popup {
 	constructor (text) {

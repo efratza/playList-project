@@ -4,12 +4,13 @@ class FormPopup extends Popup{
 	
 	constructor(){		
 	super(null);
+	this.newPlaylistObject ={};
 	
 }
 
-build(){
-	var myForm = this;
-	    this.newPlaylistObject ={};
+build(sourcePlayList){
+	    
+	    this.sourcePlayList = sourcePlayList;
 		super.build();
 		this.buildForm();
 		var container = $('<div>',{
@@ -20,14 +21,12 @@ build(){
 
 
 	resetPopup(){
-		console.log(222);
 		 $('.formInput').val("");
 	}
 
 
 
    saveData(){
-   	console.log(111)
      	new Promise(function (resolve) {
                console.log($('.formpop'))
                $('.formpop').submit(function(event) {
@@ -35,37 +34,141 @@ build(){
                             resolve(event);
                    });
           }).then(function(event) {
-	   		 		console.log(221)
-                  save();
+	   		 		//console.log(221)
+                   this.saveFirstPopupData(event);
           }.bind(this));
+          console.log(this)
       }
 
 
-       save(event){
-       	console.log(jjj)
-       	    var newPlaylistObject = {};
-       	    newPlaylistObject.name = $(event.target).find('input[name=name]').val();
-			newPlaylistObject.photo = $(event.target).find('input[name=photo]').val();
-   //      	newPlaylistObject.name = $('#nameInput').val();
-			// newPlaylistObject.photo = $('#urlInput').val();
-			console.log(newPlaylistObject);		
-			buildNextPop();
+ saveData2(){
+     	new Promise(function (resolve) {
+               console.log($('.formpop'))
+               $('.formpop').submit(function(event) {
+                        event.preventDefault();
+                            resolve(event);
+                   });
+          }).then(function(event) {
+	   		 		//console.log(221)
+                   this.saveSecondPopupData(event);
+          }.bind(this));
+          console.log(this)
+      }
+
+
+
+       saveFirstPopupData(event){
+       
+      	    this.newPlaylistObject = {};
+
+      	     
+
+
+       	    this.newPlaylistObject.name = $(event.target).find('input[name=name]').val();
+			this.newPlaylistObject.photo = $(event.target).find('input[name=photo]').val();	
+			debugger
+
+
+
+			ajax({
+                    "name": this.newPlaylistObject.name,
+                    "image": this.newPlaylistObject.photo,
+                    "songs":"[{'name': 'Efrat', 'url':'aaa'}]",
+                    //"id":4
+                },
+                "api/playlist?type=playlist",
+                'POST')
+
+		 			.then(function(response) {
+					debugger;
+
+		               // console.log(data.data.id);
+		               // console.log(data.data);
+		              //  $.each(data.data, function(index, val) {
+		              //   buildPlaylist(index, val);
+		              // }); 
+		         });
+			 // $.post("api/playlist.php?type=playlist&id=" + this.sourcePlayList.length+1, {
+    //                 name: this.newPlaylistObject.name,
+    //                 image: this.newPlaylistObject.photo,
+    //             }, function (data, textStatus, xhr) {
+    //             	debugger;
+    //             	console.log("id=" + data.id + ", status=" + textStatus + ", statusId=" + xhr.status);
+    //                 return (data.success);
+    //             });
+
+
+			this.buildNextPop();
        }
 
+       saveSecondPopupData(){
+
+		this.newPlaylistObject.songs = [];
+		//$.each($(".classblablabla"))
+       	//When you create name/url elements in the page, add class for url song, and another class to name song
+       	//when you get here - get all objects by jquery with those classes
+       	//each loop, add new object to this.newPlaylistObject.songs
+
+         debugger;
+       		data = {
+
+       			"name": this.newPlaylistObject.name,
+       			"image": this.newPlaylistObject.photo,
+       			"songs":[{"name": "Efrat", "url":"aaa"}]
+       		};
+
+
+       	ajax(data,"api/playlist",'POST')
+ 			.then(function(response) {
+			debugger;
+
+               // console.log(data.data.id);
+               // console.log(data.data);
+              //  $.each(data.data, function(index, val) {
+              //   buildPlaylist(index, val);
+              // }); 
+         });
+
+
+		}
+
        buildNextPop(){
-      		$('.formpop').remove();
-			console.log(555)
-       		var form = $('<form>');
-				var songNameLabel = $('<label>', {
-					class: "song-name", 
+
+debugger;
+       	$('.formpop').remove();
+		var form = $('<form>');
+		form.appendTo($('#popup_container'));
+
+       	var songUrlLabel = $('<label>', {
+					class: "song-url",
+					text: "Song URL", 
 				}).appendTo(form);
-				$('<span>', {text: "Song URL"}).appendTo(songNameLabel);
+
 				$('<input>', {
 					type: "text", 
 					placeholder: "song url", 
-				}).appendTo(songNameLabel);
+					value:"C:\\Users\\yg6y\\Music\\אברהם פריד אוצר של יר''ש - עותק\\07 - Playing With Fire.mp3"
+				}).appendTo(form);
 
-				return form;
+			var songNameLabel = $('<label>', {
+				class: "song-name",
+				text: "Name", 
+			}).appendTo(form);
+
+			$('<input>', {
+				type: "text", 
+				placeholder: "song name", 
+				value: "Playing With Fire"
+			}).appendTo(form);
+
+
+			$('<button>', {
+				text: "save", 
+				click: this.saveSecondPopupData.bind(this)
+				
+			}).appendTo(form);
+
+			
 			}
        
 
@@ -88,7 +191,8 @@ buildForm(){
 					name: 'name',
 					id:"nameInput",
 					class:"formInput",
-					type: "text", 
+					type: "text",
+					value:'Fried',
 					placeholder: "Playlist Name", 
 				}).appendTo(nameAlbom);
 		var urlAlbom =  $('<label>', {
@@ -101,7 +205,8 @@ buildForm(){
 					name: 'photo',
 					id:"urlInput",
 					class:"formInput",
-					type: "text", 
+					type: "text",
+					value:"C:\\Users\\yg6y\\Music\\אברהם פריד אוצר של יר''ש - עותק\\Frid.jpg",
 					placeholder: "Playlist Url", 
 				}).appendTo(urlAlbom);		
 		$('<input>',{
@@ -109,7 +214,7 @@ buildForm(){
 			value:"NEXT",
 			// text:"NEXT",
 			class:'next',
-			click: this.saveData
+			click: this.saveData.bind(this),
 		}).appendTo(form);
 		 $('<button>',{
 			text: 'RESET FIELDS',
@@ -137,29 +242,6 @@ buildForm(){
 				   		 })
 				       })
 				     }
-
-
-  //    $.get('form.html' ,function(data){
-		// var content = $('<div>',{
-		// 	id:"popupContent",
-		// 	html:data,
-		// 	click:function(e){
-		// 	},
-		// }).appendTo(popupContainer);
-		// content.find('form').submit (function(event){
-		// 	newPlaylistObject={};
-		// 	event.preventDefault();
-		// 	newPlaylistObject.name = $(event.target).find('input [name = name]').val();
-		// 	newPlaylistObject.name = $(event.target).find('input [name = photo]').val();
-		// 	addSongs($(event.target));
-		// });
-		// });
-		
-		sum (num1 , num2){
-			return num1+num2;
-		 
-		}
-
 
 
 
